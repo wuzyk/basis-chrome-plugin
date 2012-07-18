@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Devtools Page</title>
+    <!--<script src="devtools.js"></script>-->
+    <!--<script src="./background.js" type="text/javascript"></script>-->
+  </head>
+  <body>
+    <script type="text/javascript">
+      chrome.devtools.panels.create(
+        "Basis Devtools",
+        "icon24x24.png",
+        "index.html"
+      );
+    </script>
+  </body>
+</html>

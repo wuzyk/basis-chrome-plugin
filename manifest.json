@@ -1,0 +1,19 @@
+{
+  "name": "Basis Framework Devtools",
+  "version": "1.0.8",
+  "description": "Basis developer tools",
+  "devtools_page": "devtools.html",
+  "permissions":  [
+    "tabs", 
+    "http://*/*",
+    "https://*/*"
+  ],
+  "background": { "scripts": ["background.js"] },
+  "icons": { "128": "icon128x128.png" },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
