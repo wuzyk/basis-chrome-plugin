@@ -1,17 +1,3 @@
-  .Editor-Toolbar
-  {
-    /*background: -webkit-linear-gradient(top, #E8E8E8, #DDD);*/
-    border-bottom: 1px solid #DDD;
-    box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.15);
-    padding: 0.5em;
-  }
-
-  .Editor-Content
-  {
-    -webkit-box-flex: 1;
-    overflow: auto;
-    position: relative;
-  }
 
 
   .DictionaryList .Basis-DropdownList
