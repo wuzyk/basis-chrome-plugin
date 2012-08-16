@@ -26,19 +26,19 @@
   var FileClass = File.entityType.entityClass;
 
   File.createFile = function(filename){
-    app.main.callPageScriptFunction('createFile', filename);    
+    app.callPageScriptFunction('createFile', filename);    
   }
 
   FileClass.extend({
     read: function(){
       this.setState(STATE.PROCESSING);
-      app.main.callPageScriptFunction('readFile', this.data.filename);
+      app.callPageScriptFunction('readFile', this.data.filename);
     },
     save: function(){
       if (this.modified)
       {
         this.setState(STATE.PROCESSING);
-        app.main.callPageScriptFunction('saveFile', this.data.filename, this.data.content);
+        app.callPageScriptFunction('saveFile', this.data.filename, this.data.content);
       }
     }
   });
@@ -59,7 +59,7 @@
     }
   });
 
-  app.main.onPageScriptMessage(function(msg){
+  app.onPageScriptMessage(function(msg){
     if (msg.action == 'filesChanged')
     {
       var data = msg.data.toObject();
@@ -71,17 +71,17 @@
           if (file.content == "null")
             delete file.content;
 
-          app.type.File(file);
+          File(file);
         }
 
       if (data.deleted)
         for (var i = 0, filename; filename = data.deleted[i]; i++)
-          app.type.File(filename).destroy();
+          File(filename).destroy();
     }
     else if (msg.action == 'updateFile')
     {
       var data = msg.data.toObject();
-      var file = app.type.File(data.filename);
+      var file = File(data.filename);
       file.commit(data);
       file.setState(data.content == null ? STATE.UNDEFINED : STATE.READY);
     }

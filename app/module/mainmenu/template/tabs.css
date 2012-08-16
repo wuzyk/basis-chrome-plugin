@@ -1,5 +1,5 @@
 
-  .App-MainMenu-Tabs
+  /*.App-MainMenu-Tabs
   {
     position: absolute;
     top: 0;
@@ -15,4 +15,4 @@
   .App-MainMenu.pageSelected .App-MainMenu-Tabs
   {
     display: none;
-  }
+  }*/

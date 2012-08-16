@@ -4,7 +4,8 @@
   "description": "Basis developer tools",
   "devtools_page": "devtools.html",
   "permissions":  [
-    "tabs", 
+    "tabs",
+    "contextMenus", 
     "http://*/*",
     "https://*/*"
   ],

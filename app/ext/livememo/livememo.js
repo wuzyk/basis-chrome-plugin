@@ -1,8 +1,32 @@
 
   basis.require('basis.ui');
+  basis.require('basis.dom.event');
+
+  var Event = basis.dom.event;
   
   var LiveMemo = basis.ui.Node.subclass({
-    template: resource('template/livememo.tmpl'),
+    template: resource('livememo.tmpl'),
+
+    action: {
+      change: function(event){ 
+        this.updateMemo(); 
+      },
+      keyup: function(event){
+        this.updateMemo();
+      },
+      keydown: function(event){
+        if (Event.key(event) == Event.KEY.ENTER)
+          Event.kill(event);
+      },
+      focus: function(event){
+        if (!this.timer)
+          this.timer = setInterval(this.updateMemo.bind(this), 100);
+      },
+      blur: function(event){
+        clearTimeout(this.timer);
+        delete this.timer;
+      }
+    },
 
     init: function(config){
       basis.ui.Node.prototype.init.call(this, config);
@@ -10,12 +34,9 @@
 
       memos[this.eventObjectId] = this;
 
-      Event.addHandler(this.element, 'scroll', function(){
+      basis.dom.event.addHandler(this.element, 'scroll', function(){
         this.element.scrollTop = 0;
       });
-
-      this.tmpl.memo.object = this;
-      Event.addHandlers(this.tmpl.memo, LIVEMEMO_HANDLERS);
 
       this.cachedValue = undefined;
       this.tmpl.memo.value = this.tmpl.shadowMemo.value = this.text || '';
@@ -26,7 +47,7 @@
     },
     setText: function(text){
       this.tmpl.memo.value = this.tmpl.shadowMemo.value = text;
-      this.update();        
+      this.updateMemo();        
     },
     updateMemo: function(){
       var newValue = this.tmpl.memo.value;
@@ -40,7 +61,6 @@
     },
     destroy: function(){
       delete memos[this.eventObjectId];
-      Event.clearHandlers(this.tmpl.memo);
 
       clearInterval(this.timer);
       delete this.timer;
@@ -49,37 +69,12 @@
     }
   });
 
-  var LIVEMEMO_HANDLERS = {
-    change: function(event){ 
-      var object = Event.sender(event).object;
-      object.updateMemo(); 
-    },
-    keyup: function(event){
-      var object = Event.sender(event).object;
-      object.updateMemo();
-    },
-    keydown: function(event){
-      if (Event.key(event) == Event.KEY.ENTER)
-        Event.kill(event);
-    },
-    focus: function(event){
-      var object = Event.sender(event).object;
-      if (!object.timer)
-        object.timer = setInterval(object.updateMemo.bind(object), 100);
-    },
-    blur: function(event){
-      var object = Event.sender(event).object;
-      clearTimeout(object.timer);
-      delete object.timer;
-    }
-  } 
-
   var memos = {};
   function updateMemos(){
     for (var i in memos)
       memos[i].updateMemo();
   }
-  Event.addHandler(window, 'resize', updateMemos);
+  basis.dom.event.addHandler(window, 'resize', updateMemos);
 
   module.exports = {
     LiveMemo: LiveMemo,

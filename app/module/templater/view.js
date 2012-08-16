@@ -4,6 +4,9 @@
   basis.require('basis.template');
   basis.require('basis.dom.event');
   basis.require('basis.ui');
+  basis.require('basis.ui.button');
+
+  resource('css/style.css')().startUse();
 
   //
   // import names
@@ -14,10 +17,12 @@
   var classList = basis.cssom.classList;
 
 
-  var editor = basis.resource('app/templater/widget/tmplEditor.js');
-  var tokenView = basis.resource('app/templater/widget/tokenView.js');
-  var filelist = basis.resource('app/templater/widget/filelist.js');
-  var resourceEditor = basis.resource('app/templater/widget/resourceEditor.js');
+  var editor = resource('widget/tmplEditor.js');
+  var tokenView = resource('widget/tokenView.js');
+  var filelist = resource('widget/filelist.js');
+  var resourceEditor = resource('widget/resourceEditor.js');
+
+
 
   editor().tmplSource.addLink(tokenView(), function(source){
     var decl = nsTemplate.makeDeclaration(source)
@@ -55,9 +60,9 @@
     classList(inspectButton.element).bool('active', inspectMode);
 
     if (inspectMode)
-      app.main.callPageScriptFunction('startTemplateInspect');
+      app.callPageScriptFunction('startTemplateInspect');
     else
-      app.main.callPageScriptFunction('endTemplateInspect');
+      app.callPageScriptFunction('endTemplateInspect');
   }
   
 
@@ -97,20 +102,16 @@
     filelist().tree.selection.addHandler({
       datasetChanged: function(selection, delta){
         var item = selection.pick();
-        debugger;
         this.setSourceFile(item && item.data.type == 'file' ? item : null);
       }
     }, editor());
   });
 
-  app.main.isServerOnline.addLink(null, function(value){
-    //if (value)
-      initFilelist();
-
-    //basis.cssom.display(filelist().element, value);
+  app.isServerOnline.addLink(null, function(value){
+    initFilelist();
   });
 
-  app.main.onPageScriptMessage(function(msg){
+  app.onPageScriptMessage(function(msg){
     if (msg.action == 'pickTemplate')
     {
       inspect(false);

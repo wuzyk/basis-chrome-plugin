@@ -1,10 +1,10 @@
 
-  @import '../templates/editor/style.css';
+  /*@import '../templates/editor/style.css';
   @import '../templates/tokenView/style.css';
   @import '../templates/filelist/style.css';
-  @import '../templates/resourceEditor/style.css';
+  @import '../templates/resourceEditor/style.css';*/
 
-  html,
+  /*html,
   body
   {
     overflow: auto;
@@ -13,7 +13,7 @@
     height: 100%;
     font-family: Tahoma, Verdana, Arial, sans-serif;
     font-size: small;
-  }
+  } */
 
   .TemplaterPage,
   .Basis-VerticalPanelStack
@@ -27,11 +27,11 @@
 
   .TemplaterPage
   {
-    padding: 5px;
+    /*padding: 5px;*/
   }
   .Basis-VerticalPanelStack
   {
-    border: 3px solid #C8C8C8;
+    /*border: 3px solid #C8C8C8;
     background: white;
 
       -webkit-transition: border-color .5s;
@@ -41,7 +41,7 @@
 
       -webkit-border-radius: 4px;
       -moz-border-radius: 4px;
-    border-radius: 4px;
+    border-radius: 4px;*/
 
     overflow: visible;
   }

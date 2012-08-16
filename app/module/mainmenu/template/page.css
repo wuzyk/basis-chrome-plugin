@@ -1,5 +1,5 @@
 
-  .App-MainMenu-Page
+  /*.App-MainMenu-Page
   {
     position: absolute;
     top: 0;
@@ -10,7 +10,7 @@
     z-index: 1;
     overflow: hidden;
     overflow-y: auto;
-  }
+  }*/
   .App-MainMenu-Page__unselected
   {
     display: none;

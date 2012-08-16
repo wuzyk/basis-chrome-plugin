@@ -7,6 +7,7 @@
   basis.require('basis.ui.tabs');
   basis.require('basis.ui.resizer');
 
+  resource('../templates/resourceEditor/style.css')().startUse();
 
   //
   // import names
@@ -34,7 +35,7 @@
   // Main part
   //
 
-  var Editor = basis.resource('app/templater/widget/Editor.js')();
+  var Editor = resource('Editor.js')();
 
   var ResourceEditor = Editor.subclass({
     active: true,
@@ -116,7 +117,7 @@
               autoDelegate: DELEGATE.OWNER,
               caption: 'Create a file',
               click: function(){
-                app.type.File.createFile(this.data.filename);
+                app.type.file.File.createFile(this.data.filename);
               }
             })
           }
@@ -230,7 +231,7 @@
     /*var decl = nsTemplate.makeDeclaration(source)
     tree.setChildNodes(decl.tokens);*/
 
-    resourceFilesDataset.set(decl.resources.map(function(res){ return app.type.File.getSlot(path + res) }));
+    resourceFilesDataset.set(decl.resources.map(function(res){ return app.type.file.File.getSlot(path + res) }));
     //resourceEditorList.setChildNodes(decl.resources.map(function(res){ return { filename: (path || '') + res } }));
     /*resourceList.setChildNodes(decl.resources.map(function(res){ return { data: { filename: res, path: path }}}));
     if (resourceList.firstChild)

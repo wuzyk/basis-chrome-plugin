@@ -59,8 +59,17 @@
           childClass: {
             template: resource('template/tab.tmpl'),
 
+            listen: {
+              delegate: {
+                select: function(){
+                  this.select();
+                }
+              }
+            },
+
             action: {
-              select: function(event){
+              select: function(event){                       
+                this.select();
                 basis.dom.event.kill(event);
               }
             },

@@ -13,12 +13,14 @@
 
   var EXTENSION_LAST_TAB_STORAGE_KEY = 'BasisDevtoolLastTab';
 
+  var mainMenu;
+
   function initMainMenu(){
-    var mainMenu = basis.resource('app/module/mainmenu/mainmenu.js')();
+    mainMenu = basis.resource('app/module/mainmenu/mainmenu.js')();
     
     mainMenu.setChildNodes([
-      /*basis.resource('app/module/localization/localization.js')(),
-      basis.resource('app/module/templater/templater.js')()*/
+      basis.resource('app/module/localization/localization.js')(),
+      basis.resource('app/module/templater/templater.js')()
     ]);
 
     var tabName = localStorage[EXTENSION_LAST_TAB_STORAGE_KEY];
@@ -44,6 +46,7 @@
   var port;
   var missedHandlers = [];
   var isServerOnline = new Property(false);
+  var isPageScriptReady = new Property(false);
 
   function initPageScript(){
     port = chrome.extension.connect({ name: "extensionUIPort" });
@@ -51,15 +54,22 @@
     port.onMessage.addListener(function(msg) {
       if (msg.action == 'init')
       {
+        isPageScriptReady.set(false);
         injectScript();
       }
       else if (msg.action == 'inited')
       {
         callPageScriptFunction('checkFsObserverState');
+        isPageScriptReady.set(true);
       }
       else if (msg.action == 'fsobserverState')
       {
         isServerOnline.set(msg.data.toObject().state);
+      }
+      else if (msg.action == 'contextMenuTranslate')
+      {
+        mainMenu.item('Localization').select();
+        callPageScriptFunction('getTokenByContextMenu');
       }
     });
 
@@ -118,6 +128,7 @@
     initMainMenu();
   });
 
+
   //
   // extend
   //
@@ -125,6 +136,7 @@
   module.exports = {
     onPageScriptMessage: onPageScriptMessage,
     callPageScriptFunction: callPageScriptFunction,
-    isServerOnline: isServerOnline
+    isServerOnline: isServerOnline,
+    isPageScriptReady: isPageScriptReady
   };
 

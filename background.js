@@ -5,6 +5,7 @@
 
   var contentScriptPorts = {};
   var extensionUIPorts = {};
+  var extensionTabIdTab = {};
 
   var contentScriptPort;
   var extensionUIPort;
@@ -17,6 +18,9 @@
     port.onMessage.addListener(function(msg) {
       if (extensionUIPorts[tabId])
         extensionUIPorts[tabId].postMessage({ action: msg.action, data: msg.data });
+
+      if (msg.action == 'token' && extensionTabIdTab[tabId])
+        chrome.tabs.update(extensionTabIdTab[tabId], { active: true });
     });
 
     port.onDisconnect.addListener(function(){
@@ -26,12 +30,14 @@
 
   function attachExtensionUIPort(port){
     var tabId;
+    var extensionTabId = port.sender.tab.id;
 
     port.onMessage.addListener(function(msg) {
       if (msg.action == 'init')
       {
         extensionUIPorts[msg.tabId] = port;
         tabId = msg.tabId;
+        extensionTabIdTab[msg.tabId] = extensionTabId;
       }
 
       if (contentScriptPorts[tabId])
@@ -50,4 +56,21 @@
 
     if (port.name == 'extensionUIPort')
       attachExtensionUIPort(port);
+  });
+
+
+  /*chrome.contextMenus.create({
+    type: 'separator'
+  });*/
+
+  chrome.contextMenus.create({
+    title: 'Translate',
+    contexts: ["all"],
+    onclick: function(info, tab){
+      /*if (extensionTabIdTab[tab.id])
+        chrome.tabs.update(extensionTabIdTab[tab.id], { active: true });*/
+
+      if (extensionUIPorts[tab.id])
+        extensionUIPorts[tab.id].postMessage({ action: 'contextMenuTranslate' });
+    }
   });

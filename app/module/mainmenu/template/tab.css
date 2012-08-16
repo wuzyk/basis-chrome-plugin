@@ -1,4 +1,24 @@
 
+  .App-MainMenu-Tab
+  {
+    float: left;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  .App-MainMenu-TabContent
+  {
+    padding: 0.8em 1.5em;
+    display: block;
+  }
+
+
+  .App-MainMenu-Tab.selected
+  {
+    background: #7A7975;
+    color: white;
+
+  }
 
   /*.App-MainMenu-Tab
   {

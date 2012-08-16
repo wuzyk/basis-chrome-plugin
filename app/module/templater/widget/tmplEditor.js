@@ -7,6 +7,7 @@
   basis.require('basis.ui');
   basis.require('basis.ui.form');
   basis.require('basis.ui.field');
+  basis.require('basis.ui.button');
 
 
   //
@@ -34,10 +35,11 @@
   // Main part
   //
 
-  var Editor = basis.resource('app/templater/widget/Editor.js')();
-  var tokenView = basis.resource('app/templater/widget/tokenView.js');
+  var Editor = resource('Editor.js')();
+  var tokenView = resource('tokenView.js');
 
 
+  resource('../templates/editor/style.css')().startUse();
 
 
   var tmplSource = new nsProperty.Property('');
@@ -165,7 +167,7 @@
       var tmplFilename = filename;
       //var tmplFilename = filename.replace(/\.[a-z0-9]+$/, '.tmpl');
       //var cssFilename = filename.replace(/\.[a-z0-9]+$/, '.css');
-      tmplEditor.setDelegate(app.type.File.getSlot({ filename: filename, content: '' }));
+      tmplEditor.setDelegate(app.type.file.File.getSlot({ filename: filename, content: '' }));
       //cssEditor.setDelegate(app.type.File.getSlot({ filename: cssFilename, content: '' }));
     }
     else

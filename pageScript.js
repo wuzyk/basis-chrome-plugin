@@ -22,7 +22,47 @@ window.pageScript = function(){
     }
 
     //
-    // L10n Inspect
+    // l10n context menu
+    //
+    var nodePickedByContextMenu;
+    document.addEventListener('contextmenu', contextMenuHandler);
+
+    function contextMenuHandler(event){
+      nodePickedByContextMenu = basis.dom.event.sender(event);
+    }
+
+    function getTokenByContextMenu(){
+      if (nodePickedByContextMenu)
+      {
+        var node = nodePickedByContextMenu;
+        var basisObjectId = node.basisObjectId;
+
+        while (!basisObjectId && node.parentNode)
+        {
+          node = node.parentNode;
+          basisObjectId = node.basisObjectId;
+        }
+
+        if (basisObjectId)
+        {
+          var basisNode = basis.template.resolveObjectById(basisObjectId);
+          if (basisNode)
+          {
+            bindings = (basisNode.tmpl.set.debug && basisNode.tmpl.set.debug()) || [];
+            for (var j = 0, binding; binding = bindings[j]; j++)
+            {
+              if (binding.attachment && binding.dom.nodeType == basis.dom.TEXT_NODE && nodePickedByContextMenu.contains(binding.dom))
+              {
+                loadToken(binding.attachment);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    //
+    // l10n Inspect
     //
 
     var overlay = DOM.createElement('DIV[style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10000; background: rgba(128,128,128,.0.05)"]');
@@ -147,21 +187,25 @@ window.pageScript = function(){
       var data = [];
 
       for (var dictionaryName in dictionaries)
-        data.push({ Dictionary: dictionaryName, Location: dictionaries[dictionaryName].location });
+      {
+        if (dictionaries[dictionaryName].location)
+          data.push({ Dictionary: dictionaryName, Location: dictionaries[dictionaryName].location });
+      }
 
       sendData('dictionaryList', data);
     }
 
     function loadDictionaryResource(dictionaryName, culture){
       var dict = basis.l10n.getDictionary(dictionaryName);
-      if (dict){
+      if (dict)
+      {
         basis.l10n.loadCultureForDictionary(basis.l10n.getDictionary(dictionaryName), culture);
 
         var data = {
           dictionaryName: dictionaryName,
           tokens: {}
         };
-        for (var tokenName in dict.resources[culture])
+        for (var tokenName in dict.resources['base'])
         {
           if (!data.tokens[tokenName])
           {
@@ -250,7 +294,7 @@ window.pageScript = function(){
       var newContent;
       for (var i = 0, culture; culture = cultureList[i]; i++)
       {
-        filename = '/' + basis.devtools.abs2rel(location + '/' + culture + '.json');
+        filename = '/' + basis.path.relative(location + '/' + culture + '.json');
         file = basis.devtools.getFile(filename);
 
         if (file)
@@ -354,7 +398,8 @@ window.pageScript = function(){
         return value && value.element && value.template instanceof basis.template.Template ? value : null;
       });
 
-      function updatePickupElement(value, oldValue){
+      function updatePickupElement(property, oldValue){
+        var value = property.value;
         if (value)
         {
           //range.selectNodeContents(value.element);
@@ -397,7 +442,7 @@ window.pageScript = function(){
           var url = pickupTarget.value.template.source.url;
           if (url)
           {
-            var filename = '/' + basis.devtools.abs2rel(url);
+            var filename = '/' + basis.path.relative(url);
             sendData('pickTemplate', { filename: filename });
           }
           else
@@ -550,7 +595,8 @@ window.pageScript = function(){
       saveFile: saveFile,
       createFile: createFile,
       startTemplateInspect: startTemplateInspect,
-      endTemplateInspect: endTemplateInspect
+      endTemplateInspect: endTemplateInspect,
+      getTokenByContextMenu: getTokenByContextMenu
     }
   }
 

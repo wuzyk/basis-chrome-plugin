@@ -6,8 +6,8 @@
     var action = transferDiv.getAttribute('action');
     var data = transferDiv.innerText;
 
-    console.log('transfer data action:', action);
-    console.log('transfer data:', data);
+    //console.log('transfer data action:', action);
+    //console.log('transfer data:', data);
 
     port.postMessage({ action: action, data: data });
   }

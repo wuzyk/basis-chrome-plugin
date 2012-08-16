@@ -1,4 +1,48 @@
 
+  .App-MainMenu
+  {
+    height: 100%;
+  }
+
+  .App-MainMenu-Tabs
+  {
+    height: 40px;
+  }
+
+  .App-MainMenu-Pages
+  {
+    position: absolute;
+    top: 40px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    /*box-shadow: 0 0 10px 0px rgba(0,0,0,.15);*/
+    border-top: 1px solid #B6BAC0;
+  }
+
+
+
+  .App-MainMenu-Pages .App-MainMenu-Page,
+  .App-MainMenu-Pages .App-MainMenu-Page-Content
+  {
+    height: 100%;
+    padding: 0;
+  }
+
+  .App-MainMenu-Tabs
+  {
+    background: #F0F0F0;
+  }
+
+  /*.App-MainMenu-Tab.selected
+  {
+    background: white;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 -5px 10px 0 rgba(0,0,0,.15);
+  }*/
+
+
   /*.App-MainMenu
   {
     position: absolute;

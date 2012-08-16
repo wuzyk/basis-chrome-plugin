@@ -1,6 +1,4 @@
 
-  'use strict';
-
   basis.require('basis.dom.event');
   basis.require('basis.cssom');
   basis.require('basis.data');
@@ -8,6 +6,7 @@
   basis.require('basis.ui');
   basis.require('basis.ui.tree');
 
+  resource('../templates/tokenView/style.css')().startUse();
 
   //
   // import names

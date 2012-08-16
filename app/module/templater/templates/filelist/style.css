@@ -3,9 +3,17 @@
   {
     overflow: visible;
     float: left;
-    margin-right: 5px;
     width: 15%;
-    min-width: 200px;    
+    min-width: 200px;
+    position: relative;
+    height: 100%;
+    /*overflow: auto;*/
+    border-right: 5px solid #B6BAC0;
+
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+
+     
     /*  -webkit-transition: width .5s, opacity 1.5s; 
     transition: width .5s, opacity 1.5s;*/
   }
@@ -14,6 +22,7 @@
     border-color: #ACF;
     background: white;
   }
+
   /*#TemplateList.not-active
   {
     width: 0;
@@ -35,12 +44,12 @@
   {
     position: absolute;
     top: 0;
-    right: -8px;
+    right: -5px;
     bottom: 0;
     width: 5px;
   }
 
-  #TemplateList .devtools-templateFileList
+  /*#TemplateList .devtools-templateFileList
   {
     outline: none;
     margin: 0;
@@ -51,4 +60,12 @@
   #TemplateList .fileType-tmpl .Basis-TreeNode-Caption
   {
     background-image: url(../../img/file-tmpl.png);
+  }*/
+
+  #TemplateList .FileList
+  {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-box-flex: 1;
   }
