@@ -230,8 +230,15 @@
   exports.setSource = function(decl, path){
     /*var decl = nsTemplate.makeDeclaration(source)
     tree.setChildNodes(decl.tokens);*/
+    if (decl)
+    {
+      resourceFilesDataset.set(decl.resources.map(function(res){ 
+        return app.type.file.File.getSlot(path + basis.path.basename(res));
+      }));
+    }
+    else
+      resourceFilesDataset.set([]);
 
-    resourceFilesDataset.set(decl.resources.map(function(res){ return app.type.file.File.getSlot(path + res) }));
     //resourceEditorList.setChildNodes(decl.resources.map(function(res){ return { filename: (path || '') + res } }));
     /*resourceList.setChildNodes(decl.resources.map(function(res){ return { data: { filename: res, path: path }}}));
     if (resourceList.firstChild)

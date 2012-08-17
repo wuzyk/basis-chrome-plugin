@@ -33,7 +33,7 @@
     var extensionTabId = port.sender.tab.id;
 
     port.onMessage.addListener(function(msg) {
-      if (msg.action == 'init')
+      if (msg.action == 'extensionInited')
       {
         extensionUIPorts[msg.tabId] = port;
         tabId = msg.tabId;

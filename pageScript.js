@@ -502,11 +502,23 @@ window.pageScript = function(){
       }
     }
 
-    function getFileList(){
+    if (basis.devtools)
+    {
       var fileAll = basis.devtools.files;
       fileAll.addHandler(FILE_LIST_HANDLER);
       FILE_LIST_HANDLER.datasetChanged.call(fileAll, fileAll, { inserted: fileAll.getItems() });
     }
+
+    function getFileList(){
+      if (basis.devtools)
+      {
+        var files = basis.devtools.files; 
+        sendData('filesChanged', { inserted: files.getItems().map(Function.getter('data')) });
+      }
+    }
+
+    
+
 
     //
     // File Operations
@@ -535,13 +547,14 @@ window.pageScript = function(){
           sendData('fsobserverState', { state: this.data.isOnline });
       } 
     }
+
     function checkFsObserverState(){
       if (basis.devtools)
-      {
-        basis.devtools.serverState.addHandler(serverStateChangedHandler);
         sendData('fsobserverState', { state: basis.devtools.serverState.data.isOnline });
-      }
     }
+    
+    if (basis.devtools)
+      basis.devtools.serverState.addHandler(serverStateChangedHandler);
     
     //
     // Color staff

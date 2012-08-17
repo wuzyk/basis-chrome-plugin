@@ -92,12 +92,19 @@
         }
       },
       modified: {
-        events: 'targetChanged update',
+        events: 'targetChanged rollbackUpdate update',
         getter: function(node){
           return node.target && node.target.modified ? 'modified' : '';
         }
       }/*,
       createFilePanel: 'satellite:'*/
+    },
+    listen: {
+      target: {
+        rollbackUpdate: function(){
+          this.updateBind('modified');
+        }
+      }
     },
     
     /*listen: {

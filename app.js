@@ -52,12 +52,12 @@
     port = chrome.extension.connect({ name: "extensionUIPort" });
 
     port.onMessage.addListener(function(msg) {
-      if (msg.action == 'init')
+      if (msg.action == 'contentScriptInited')
       {
         isPageScriptReady.set(false);
         injectScript();
       }
-      else if (msg.action == 'inited')
+      else if (msg.action == 'transportInited')
       {
         callPageScriptFunction('checkFsObserverState');
         isPageScriptReady.set(true);
@@ -76,17 +76,20 @@
     for (var i = 0, handler; handler = missedHandlers[i]; i++)
       port.onMessage.addListener(handler);
 
+
+    port.postMessage({ action: 'extensionInited', tabId: chrome.devtools.inspectedWindow.tabId});
+
     injectScript();
   }
 
   function injectScript(){
     if (window.pageScript)
     {
-      var tabId = chrome.devtools.inspectedWindow.tabId;
+      //var tabId = chrome.devtools.inspectedWindow.tabId;
 
       chrome.devtools.inspectedWindow.eval(window.pageScript(), function(result){
         if (result)
-          port.postMessage({ action: 'init', tabId: tabId});
+          port.postMessage({ action: 'pageScriptInited' });
         else
         {
           new uiNode({

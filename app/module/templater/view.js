@@ -5,6 +5,7 @@
   basis.require('basis.dom.event');
   basis.require('basis.ui');
   basis.require('basis.ui.button');
+  basis.require('basis.ui.resizer');
 
   resource('css/style.css')().startUse();
 
@@ -25,20 +26,28 @@
 
 
   editor().tmplSource.addLink(tokenView(), function(source){
-    var decl = nsTemplate.makeDeclaration(source)
-
-    tokenView().setSource(decl);
-
-    var path;
-    var curTemplateFile = editor().tmplEditor.delegate;
-    if (curTemplateFile)
+    if (source)
     {
-      var filename = curTemplateFile.data.filename;
-      if (filename)
-        path = filename.substring(0, filename.lastIndexOf('/') + 1);
+      var decl = nsTemplate.makeDeclaration(source);
+
+      tokenView().setSource(decl);
+
+      var path;
+      var curTemplateFile = editor().tmplEditor.delegate;
+      if (curTemplateFile)
+      {
+        var filename = curTemplateFile.data.filename;
+        if (filename)
+          path = filename.substring(0, filename.lastIndexOf('/') + 1);
+      }
+        
+      resourceEditor().setSource(decl, path);
     }
-      
-    resourceEditor().setSource(decl, path);
+    else
+    {
+      tokenView().setSource();
+      resourceEditor().setSource();
+    }  
   });
 
    
@@ -110,6 +119,34 @@
   app.isServerOnline.addLink(null, function(value){
     initFilelist();
   });
+
+  if (chrome && chrome.extension)
+  {
+    app.isPageScriptReady.addLink(null, function(value){
+      if (value)
+        app.callPageScriptFunction('getFileList');
+    });
+  }
+  else
+  {
+    app.type.file.File({
+      filename: 'basis/resource.css',
+      type: 'file',
+      content: 
+        '#TemplateResourceList LI\n\
+        {\n\
+          padding: 0 0 0 16px;\n\
+          margin: 0;\n\
+        }'
+    });
+
+    app.type.file.File({
+      filename: 'basis/resource.tmpl',
+      type: 'file',
+      content: 
+        '{b:resource src="resource.css"}\n<li>{filename}</li>'
+    });
+  }
 
   app.onPageScriptMessage(function(msg){
     if (msg.action == 'pickTemplate')

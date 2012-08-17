@@ -168,6 +168,42 @@
               }
             }));
         }
+        else if (attrName == 'style')
+        {
+          for (var i = 0; i < bindings.length; i++)
+          {
+            var dict = bindings[i][0];
+            var list = bindings[i][1];
+
+            attrParts.push(new AttributeValuePart({
+              data: {
+                text: bindings[i][2] + ':'
+              }
+            }));
+
+            for (var b = 0; b < list.length; b++)
+            {
+              if (typeof list[b] == 'string')
+                attrParts.push(new AttributeValuePart({
+                  data: {
+                    text: list[b]
+                  }
+                }));
+              else
+                attrParts.push(new AttributeValueBinding({
+                  data: {
+                    text: '{' + dict[list[b]] + '}'
+                  }
+                }));
+            }
+
+            attrParts.push(new AttributeValuePart({
+              data: {
+                text: ';'
+              }
+            }));
+          }
+        }
         else
         {
           var dict = bindings[0];
@@ -258,7 +294,7 @@
 
     binding: {
       value: function(object){
-        return object.data[TEXT_VALUE].replace(/\r\n?|\n\r?/g, '\u21b5');
+        return (object.data[TEXT_VALUE] && object.data[TEXT_VALUE].replace(/\r\n?|\n\r?/g, '\u21b5')) || ('{' + object.data[1] + '}');//.replace(/\r\n?|\n\r?/g, '\u21b5');
       }
     }
   });
@@ -272,7 +308,7 @@
 
     binding: {
       title: function(object){
-        return object.data[COMMENT_VALUE];
+        return object.data[COMMENT_VALUE] || '{' + object.data[1] + '}';//object.data[COMMENT_VALUE];
       }
     }
   });
@@ -410,6 +446,6 @@
   exports.tree = tree;
   exports.setSource = function(decl){
     //var decl = nsTemplate.makeDeclaration(source);
-    tree.setChildNodes(decl.tokens);
+    tree.setChildNodes(decl && decl.tokens || []);
     //resourceList.setChildNodes(decl.resources.map(function(res){ return { data: { filename: res }}}));
   }

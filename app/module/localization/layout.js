@@ -152,20 +152,6 @@
   {
     app.onPageScriptMessage(function(msg){
       switch (msg.action){
-        case 'inited':
-          for (var i in resourcesLoaded)
-            delete resourcesLoaded[i];
-
-          var currentDictionary = property_CurrentDictionary.value;
-          if (currentDictionary)
-          {
-            property_CurrentDictionary.set(null);
-            property_CurrentDictionary.set(currentDictionary);
-          }
-
-          //app.callPageScriptFunction('loadCultureList');
-          //app.callPageScriptFunction('loadDictionaryList');
-        break;
 
         case 'cultureList':
           var data = msg.data.toObject();
@@ -228,6 +214,16 @@
     app.isPageScriptReady.addLink(null, function(value){
       if (value)
       {
+        for (var i in resourcesLoaded)
+          delete resourcesLoaded[i];
+
+        var currentDictionary = property_CurrentDictionary.value;
+        if (currentDictionary)
+        {
+          property_CurrentDictionary.set(null);
+          property_CurrentDictionary.set(currentDictionary);
+        }
+
         app.callPageScriptFunction('loadCultureList');
         app.callPageScriptFunction('loadDictionaryList');
       }
