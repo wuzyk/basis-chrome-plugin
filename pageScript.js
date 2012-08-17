@@ -482,8 +482,11 @@ window.pageScript = function(){
           data.inserted = [];
           for (var i = 0, object; object = delta.inserted[i]; i++)
           {
-            data.inserted.push(object.data)//sendData('addFile', object.data);
-            object.addHandler(FILE_HANDLER);
+            if (/\.(tmpl|css)/.test(basis.path.extname(object.data.filename)))
+            {
+              data.inserted.push(object.data);
+              object.addHandler(FILE_HANDLER);
+            }
           }
         }
             
@@ -493,12 +496,16 @@ window.pageScript = function(){
 
           for (var i = 0, object; object = delta.deleted[i]; i++)
           {
-            data.deleted.push(object.getId());//sendData('deleteFile', object.data);
-            object.removeHandler(FILE_HANDLER);
+            if (/\.(tmpl|css)/.test(basis.path.extname(object.data.filename)))
+            {
+              data.deleted.push(object.getId());//sendData('deleteFile', object.data);
+              object.removeHandler(FILE_HANDLER);
+            }
           }
         }
         
-        sendData('filesChanged', data);
+        if ((data.inseted && data.inseted.length) || (data.deleted && data.deleted.length))
+          sendData('filesChanged', data);
       }
     }
 

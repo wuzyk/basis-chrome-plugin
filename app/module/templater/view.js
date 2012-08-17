@@ -29,7 +29,6 @@
     if (source)
     {
       var decl = nsTemplate.makeDeclaration(source);
-
       tokenView().setSource(decl);
 
       var path;

@@ -51,14 +51,28 @@
   var fileListMatchInput = new basis.ui.Node({
     template: resource('../templates/filelist/matchInput.tmpl'),
 
+    binding: {
+      clean: function(object){
+        return object.clean ? 'clean' : '';
+      }
+    },
+
     action: {
       keyup: function(){
         matchProperty.set(this.tmpl.input.value);
       },
       change: function(){
         matchProperty.set(this.tmpl.input.value);
+      },
+      clear: function(){
+        this.tmpl.input.value = '';
+        matchProperty.set('');
       }
     }
+  });
+  matchProperty.addLink(null, function(value){
+    fileListMatchInput.clean = !value;
+    fileListMatchInput.updateBind('clean');
   });
   matchProperty.addLink(null, function(value){
     if (value)
@@ -71,8 +85,9 @@
     else
       filterFileSubset.setRule(Function.$true);
   });
+
   
-  var cancelFilterButton = new basis.ui.Node({
+  /*var cancelFilterButton = new basis.ui.Node({
     template: '<div class="FileListMatch-CancelButton" event-click="click"/>',
     action: {
       click: function(){
@@ -83,7 +98,7 @@
   });
   matchProperty.addLink(cancelFilterButton, function(value){
     basis.cssom.display(this.element, !!value);
-  });
+  });*/
 
   //
   // list

@@ -269,7 +269,7 @@
   }
 
   var inspectButton = new basis.ui.button.Button({
-    cssClassName: 'InspectButton',
+    cssClassName: 'Localization-InspectButton',
     caption: 'Start Inspect',
     click: function(){
       inspect(!inspectMode);

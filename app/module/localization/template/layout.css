@@ -83,17 +83,18 @@
 
   .DictionaryMatchInput.Basis-Field INPUT
   {
-    width: 230px;
+    width: 100%;
     margin: 0;
     padding: 2px;
     border-color: #BAB6C0;
     padding-left: 20px;
     background: url(img/input_search_16x16.png) no-repeat left center;
+    box-sizing: border-box;
   }
 
   .DictionaryMatchInput .Basis-Field-Container
   {
-    padding-right: 6px;
+    /*padding-right: 6px;*/
 
   }
 
@@ -114,7 +115,7 @@
   }
 
 
-  .InspectButton
+  .Localization-InspectButton
   {
     position: absolute;
     top: -1px;
@@ -122,7 +123,7 @@
     font-size: 100%;
   }
 
-  .InspectButton .Basis-Button-Caption
+  .Localization-InspectButton .Basis-Button-Caption
   {
     font-weight: bold;
     font-size: 85%;
@@ -131,7 +132,7 @@
   }
 
 
-  .InspectButton.active .Basis-Button-Back
+  .Localization-InspectButton.active .Basis-Button-Back
   {
     background-color: #BCD7F2;
     border-color: #888;
