@@ -339,6 +339,8 @@
   });
 
   var tree = new nsTree.Tree({
+    autoDelegate: basis.dom.wrapper.DELEGATE.PARENT,
+
     template: resource('../templates/tokenView/tree.tmpl'),
 
     action: {
@@ -402,7 +404,18 @@
     handler: {
       childNodesModified: function(object, delta){
         this.childAxis = DOM.axis(this, DOM.AXIS_DESCENDANT);
+      },
+      update: function(object, delta){
+        if ('declaration' in delta)
+          this.updateDeclaration(this.data.declaration);
+      },
+      targetChanged: function(){
+        this.updateDeclaration(this.target && this.data.declaration);
       }
+    },
+
+    updateDeclaration: function(declaration){
+      this.setChildNodes(declaration && declaration.tokens || [])
     }
   });
 
@@ -443,9 +456,9 @@
   //
 
   exports = module.exports = widget;
-  exports.tree = tree;
-  exports.setSource = function(decl){
+  //exports.tree = tree;
+  /*exports.setSource = function(decl){
     //var decl = nsTemplate.makeDeclaration(source);
     tree.setChildNodes(decl && decl.tokens || []);
     //resourceList.setChildNodes(decl.resources.map(function(res){ return { data: { filename: res }}}));
-  }
+  }*/

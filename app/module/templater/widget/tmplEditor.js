@@ -47,6 +47,8 @@
 
   // .tmpl
   var tmplEditor = new Editor({
+    autoDelegate: DELEGATE.PARENT,
+
     id: 'TmplEditor',
     sourceProperty: tmplSource,
     fileExt: 'tmpl',
@@ -148,13 +150,13 @@
   //
 
   exports = module.exports = widget;
-  exports.tmplSource = tmplSource;
-  exports.tmplEditor = tmplEditor;
+  //exports.tmplSource = tmplSource;
+  //exports.tmplEditor = tmplEditor;
   exports.setSource = function(source){
     tmplEditor.setDelegate();
     tmplEditor.update({ content: source });
   }
-  exports.setSourceFile = function(file){
+  /*exports.setSourceFile = function(file){
     var filename;
 
     if (file instanceof basis.data.DataObject)
@@ -175,4 +177,4 @@
       tmplEditor.setDelegate();
       //cssEditor.setDelegate();
     }
-  }
+  }*/

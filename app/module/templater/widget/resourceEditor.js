@@ -44,7 +44,10 @@
     template: resource('../templates/resourceEditor/resourceEditor.tmpl'),
 
     binding: {
-      filename: 'data:',
+      title: 'data:filename',
+      filename: function(object){
+        return basis.path.basename(object.data.filename);
+      },
       buttonPanel: 'satellite:',
       createFilePanel: 'satellite:'
     },
@@ -141,49 +144,97 @@
     }
   });
 
-  var resourceFilesDataset = new basis.data.Dataset({});
+  var resourceEditorList = new basis.ui.Node({
+    autoDelegate: basis.dom.wrapper.DELEGATE.PARENT,
 
-  var resourceEditorList = new UIContainer({
-    template: 
-      '<div class="ResourceEditorList"></div>',
-    
+    cssClassName: 'ResourceEditorList',
+
     childClass: ResourceEditor,
-    dataSource: resourceFilesDataset
+
+    dataSource: new basis.data.Dataset({}),
+    handler: {
+      targetChanged: function(){
+        console.log('targetChanged: ', this.target && this.data.resources);
+        this.updateResources(this.target && this.data.resources);
+      },
+      rollbackUpdate: function(object){
+        this.updateResource(this.data.resources);
+      },
+      update: function(object, delta){
+        console.log('update: ', object.data);
+        if ('resources' in delta)
+          this.updateResources(this.data.resources);
+      }
+    },
+
+    updateResources: function(resources){
+      this.dataSource.set((resources || []).map(function(filename){
+        return app.type.file.File.getSlot(filename);        
+      }));
+    }
   });
+
+
+  var resourceList = new basis.ui.Node({
+    //template: resource('../templates/resourceEditor/resourceList.tmpl')
+    cssClassName: 'ResourceList',
+
+    autoDelegate: basis.dom.wrapper.DELEGATE.PARENT, 
+
+    childClass: {
+      template: resource('../templates/resourceEditor/resourceListItem.tmpl'),
+      binding: {
+        filename: function(object){
+          return basis.path.basename(object.data.filename);
+        },
+        title: 'data:filename'
+      },
+      action: {
+        click: function(){
+          var resourceEditor = resourceEditorList.childNodes.search(this.data.filename, 'data.filename')
+          if (resourceEditor)
+            resourceEditor.element.scrollIntoView();
+          //this.select();
+        }
+      }
+    },
+
+    handler: {
+      update: function(object, delta){
+        if ('resources' in delta)
+          this.updateResources(this.data.resources);
+      },
+      targetChanged: function(){
+        this.updateResources(this.target && this.data.resources);
+      }
+    },
+    updateResources: function(resources){
+      this.setChildNodes((resources || []).map(function(filename){
+        return { data: { filename: filename } };
+      }));
+    }
+  });
+
 
   var widget = new nsLayout.VerticalPanelStack({
     id: 'Resources',
     childNodes: [
       {
-        //childNodes: resourceList
+        autoDelegate: basis.dom.wrapper.DELEGATE.PARENT, 
+        childNodes: resourceList
       },
       {
+        autoDelegate: basis.dom.wrapper.DELEGATE.PARENT,
         flex: 1,
         childNodes: resourceEditorList//cssEditor
       }
     ]
   });
 
-  /*var cssSource = new nsProperty.Property('');
-
-  var resourceList = new UIContainer({
-    selection: true,
-    childClass: UINode.subclass({
-      template: resource('../templates/resourceEditor/resourceListItem.tmpl'),
-      binding: {
-        title: 'data:filename'
-      },
-      action: {
-        select: function(){
-          this.select();
-        }
-      }
-    }),
-    template: resource('../templates/resourceEditor/resourceList.tmpl')
-  });
 
 
-  var cssEditor = new Editor({
+
+  /*var cssEditor = new Editor({
     id: 'CssEditor',
     sourceProperty: cssSource,
     fileExt: 'css',
@@ -226,10 +277,8 @@
   //
 
   exports = module.exports = widget;
-  //exports.cssSource = cssSource;
+  /*exports.editor = resourseEditorList;
   exports.setSource = function(decl, path){
-    /*var decl = nsTemplate.makeDeclaration(source)
-    tree.setChildNodes(decl.tokens);*/
     if (decl)
     {
       resourceFilesDataset.set(decl.resources.map(function(res){ 
@@ -238,9 +287,4 @@
     }
     else
       resourceFilesDataset.set([]);
-
-    //resourceEditorList.setChildNodes(decl.resources.map(function(res){ return { filename: (path || '') + res } }));
-    /*resourceList.setChildNodes(decl.resources.map(function(res){ return { data: { filename: res, path: path }}}));
-    if (resourceList.firstChild)
-      resourceList.firstChild.select();*/
-  }
+  }*/

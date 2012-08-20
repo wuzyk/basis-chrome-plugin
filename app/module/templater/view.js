@@ -25,7 +25,7 @@
 
 
 
-  editor().tmplSource.addLink(tokenView(), function(source){
+  /*editor().tmplSource.addLink(tokenView(), function(source){
     if (source)
     {
       var decl = nsTemplate.makeDeclaration(source);
@@ -47,7 +47,7 @@
       tokenView().setSource();
       resourceEditor().setSource();
     }  
-  });
+  });*/
 
    
   //
@@ -110,9 +110,14 @@
     filelist().tree.selection.addHandler({
       datasetChanged: function(selection, delta){
         var item = selection.pick();
-        this.setSourceFile(item && item.data.type == 'file' ? item : null);
+
+        item = item && /tmpl$/.test(item.data.filename) ? item : null;
+
+        editor().setDelegate(item);
+        resourceEditor().setDelegate(item);
+        tokenView().setDelegate(item);
       }
-    }, editor());
+    });
   });
 
   app.isServerOnline.addLink(null, function(value){
@@ -185,78 +190,12 @@
     return result;
   }
 
-
-
   //
-  // main part
+  // exports
   //
-
-  // editor -> tokenView
-  //editor().tmplSource.addLink(tokenView(), tokenView().setSource);
-
-  /*function updatePickupElement(value, oldValue){
-    if (value && value.element.nodeType == 1)
-      basis.cssom.setStyle(value, {
-        'box-shadow': '0 0 15px rgba(0,128,0,.75)',
-        'outline': '2px solid rgba(0,128,0,.75)',
-        'background-color': 'rgba(0,128,0,.5)'
-      });
-    if (oldValue && oldValue.element.nodeType == 1)
-      basis.cssom.setStyle(oldValue, {
-        'box-shadow': '',
-        'outline': '',
-        background: ''
-      });
-  }
-
-  var pickupActive = new basis.data.property.Property(false, {
-    change: function(value){
-      updatePickupElement(
-        value ? pickupTarget.value : null,
-        !value ? pickupTarget.value : null
-      );
-    }
-  });
-  var pickupTarget = new basis.data.property.Property(null, {
-    change: function(value, oldValue){
-      if (pickupActive.value)
-        updatePickupElement(value, oldValue);
-    }
-  }, function(value){
-    return value && value.element && value.template instanceof basis.template.Template ? value : null;
-  });
-
-  basis.dom.event.addGlobalHandler('mousemove', function(event){
-    pickupActive.set(event.altKey && event.ctrlKey);
-    var cursor = basis.dom.event.sender(event);
-    var refId;
-    do {
-      if (refId = cursor.basisObjectId)
-        return pickupTarget.set(basis.template.resolveObjectById(refId));
-    } while (cursor = cursor.parentNode);
-  });
-  basis.dom.event.addGlobalHandler('click', function(event){
-    if (pickupTarget.value && pickupActive.value)
-    {
-      basis.dom.event.kill(event);
-
-      var source = pickupTarget.value.template.source;
-      editor().setSource(String(typeof source == 'function' ? source() : source));
-    }
-  });
-  basis.dom.event.addGlobalHandler('keydown', function(event){
-    pickupActive.set(event.altKey && event.ctrlKey);
-  });
-  basis.dom.event.addGlobalHandler('keyup', function(event){
-    pickupActive.set(event.altKey && event.ctrlKey);
-  });*/
-
-
-
-
 
   exports = module.exports = templater;
   exports.filelist = filelist;
   exports.editor = editor;
-  //exports.tokenView = tokenView;
+  exports.tokenView = tokenView;
 

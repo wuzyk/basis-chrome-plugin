@@ -213,7 +213,7 @@ window.pageScript = function(){
             dict.getToken(tokenName);
           }
           
-          data.tokens[tokenName][culture] = dict.resources[culture][tokenName];
+          data.tokens[tokenName][culture] = dict.resources[culture] && dict.resources[culture][tokenName] || '';
         }
 
         sendData('dictionaryResource', data);
@@ -306,16 +306,17 @@ window.pageScript = function(){
           {
             resourceParts = [];
             
-            for (var tokenName in dictionaries[dName])
+            for (var tokenName in dict.resources['base'])
             {
-              resourceParts.push('    "' + tokenName + '": "' + dictionaries[dName][tokenName] + '"');
+              if (dictionaries[dName][tokenName])
+                resourceParts.push('    "' + tokenName + '": "' + dictionaries[dName][tokenName] + '"');
 
               if (dName == dict.namespace)
               {
                 if (!dictionaryData[tokenName])
                   dictionaryData[tokenName] = {};
 
-                dictionaryData[tokenName][culture] = dictionaries[dName][tokenName];
+                dictionaryData[tokenName][culture] = dictionaries[dName][tokenName] || '';
               }
             }
 
@@ -465,13 +466,60 @@ window.pageScript = function(){
       templateInspector.end();
     }
 
+
     //
-    // File Sync
+    // Files
     //
+    function getFileList(){
+      if (basis.devtools)
+      {
+        var files = basis.devtools.files; 
+        sendData('filesChanged', { 
+          inserted: files.getItems().map(function(file){ 
+            return { filename: file.data.filename }
+          }) 
+        });
+      }
+    }
+    function sendFile(file){
+      var data = basis.object.extend({}, file.data);
+
+      if (/tmpl$/.test(file.data.filename) && file.data.content)
+      {
+        data.declaration = basis.template.makeDeclaration(file.data.content, basis.path.dirname(basis.path.resolve(file.data.filename)) + '/');
+        data.resources = data.declaration.resources.map(function(item){ return '/' + basis.path.relative(item) });
+      }  
+        
+      sendData('updateFile', data);
+    }
+
+    function createFile(filename){
+      basis.devtools.createFile(filename);
+    }
+    function readFile(filename){
+      var file = basis.devtools.getFile(filename);
+      if (file)
+      {
+        if (file.data.content)
+          sendFile(file);
+        else
+          file.read();
+      }
+    }
+    function saveFile(filename, content){
+      var file = basis.devtools.getFile(filename);
+      if (file)
+      {
+        file.update({ content: content });
+        file.save();
+      }
+    }
+
+    // Sync
 
     var FILE_HANDLER = {
       update: function(object, delta){
-        sendData('updateFile', object.data);
+        sendFile(object);
       }
     }
     var FILE_LIST_HANDLER = {
@@ -480,11 +528,15 @@ window.pageScript = function(){
         if (delta.inserted)
         {
           data.inserted = [];
+          var fileData;
           for (var i = 0, object; object = delta.inserted[i]; i++)
           {
-            if (/\.(tmpl|css)/.test(basis.path.extname(object.data.filename)))
+            if (/\.(tmpl|css)$/.test(object.data.filename))
             {
-              data.inserted.push(object.data);
+              fileData = basis.object.extend({}, object.data);
+              delete fileData.content;
+
+              data.inserted.push(fileData);
               object.addHandler(FILE_HANDLER);
             }
           }
@@ -496,9 +548,9 @@ window.pageScript = function(){
 
           for (var i = 0, object; object = delta.deleted[i]; i++)
           {
-            if (/\.(tmpl|css)/.test(basis.path.extname(object.data.filename)))
+            if (/\.(tmpl|css)$/.test(object.data.filename))
             {
-              data.deleted.push(object.getId());//sendData('deleteFile', object.data);
+              data.deleted.push(object.getId());
               object.removeHandler(FILE_HANDLER);
             }
           }
@@ -511,43 +563,15 @@ window.pageScript = function(){
 
     if (basis.devtools)
     {
-      var fileAll = basis.devtools.files;
-      fileAll.addHandler(FILE_LIST_HANDLER);
-      FILE_LIST_HANDLER.datasetChanged.call(fileAll, fileAll, { inserted: fileAll.getItems() });
+      var files = basis.devtools.files;
+      files.addHandler(FILE_LIST_HANDLER);
+      FILE_LIST_HANDLER.datasetChanged.call(files, files, { inserted: files.getItems() });
     }
-
-    function getFileList(){
-      if (basis.devtools)
-      {
-        var files = basis.devtools.files; 
-        sendData('filesChanged', { inserted: files.getItems().map(Function.getter('data')) });
-      }
-    }
-
-    
-
 
     //
-    // File Operations
-    //
-    function createFile(filename){
-      basis.devtools.createFile(filename);
-    }
-    function readFile(filename){
-      var file = basis.devtools.getFile(filename);
-      if (file)
-        file.read();
-    }
-    function saveFile(filename, content){
-      var file = basis.devtools.getFile(filename);
-      if (file)
-      {
-        file.update({ content: content });
-        file.save();
-      }
-    }
-
     //check server state 
+    //
+
     var serverStateChangedHandler = {
       update: function(object, delta){
         if ('isOnline' in delta)

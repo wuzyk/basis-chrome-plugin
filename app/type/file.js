@@ -16,10 +16,12 @@
     fields: {
       filename: nsEntity.StringId,
       type: String,
-      lastUpdate: Date.fromISOString,
       content: function(value){ 
         return value == null ? null : String(value);
-      }
+      },
+
+      declaration: Function.$self,
+      resources: Function.$self
     }
   });
 
@@ -81,8 +83,14 @@
     else if (msg.action == 'updateFile')
     {
       var data = msg.data.toObject();
+
       var file = File(data.filename);
+
+      if (data.filename == '/app/ext/addItemCombobox/addItemCombobox.tmpl')
+        console.log('commit: ', data);
+
       file.commit(data);
+
       file.setState(data.content == null ? STATE.UNDEFINED : STATE.READY);
     }
   });

@@ -19,4 +19,9 @@
     width: 5px;
   }
 
+  #Resources .ResourceList
+  {
+    background: #F4F4F4;
+    border-bottom: 1px solid #CCC;
+  }
 
