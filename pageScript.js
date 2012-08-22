@@ -1,5 +1,9 @@
 window.pageScript = function(){
   var pageScriptFunction = function(){
+    basis.require('basis.ui');
+    basis.require('basis.ui.popup');
+    basis.require('basis.dom.wrapper');
+
     var DOM = basis.dom;
     var STATE = basis.data.STATE;
     var DataObjectSet = basis.data.property.DataObjectSet;    
@@ -300,29 +304,33 @@ window.pageScript = function(){
         if (file)
         {
           dictionaries = Object.extend({}, basis.resource(filename)());
-          dictionaries[dictionaryName] = dict.resources[culture];
+          //dictionaries[dictionaryName] = dict.resources[culture];
           dictParts = [];
           for (var dName in dictionaries)
           {
             resourceParts = [];
-            
-            for (var tokenName in dict.resources['base'])
-            {
-              if (dictionaries[dName][tokenName])
-                resourceParts.push('    "' + tokenName + '": "' + dictionaries[dName][tokenName] + '"');
 
-              if (dName == dict.namespace)
+            if (dName == dict.namespace)
+            {
+              for (var tokenName in dict.resources['base'])
               {
+                if (dict.resources[culture][tokenName])
+                  resourceParts.push('    "' + tokenName + '": "' + dict.resources[culture][tokenName] + '"');
+
                 if (!dictionaryData[tokenName])
                   dictionaryData[tokenName] = {};
 
-                dictionaryData[tokenName][culture] = dictionaries[dName][tokenName] || '';
+                dictionaryData[tokenName][culture] = dict.resources[culture][tokenName] || '';
               }
+            }
+            else
+            {
+              for (var tokenName in dictionaries[dName])
+                resourceParts.push('    "' + tokenName + '": "' + dictionaries[dName][tokenName] + '"');
             }
 
             dictParts.push('\r\n  "' + dName + '": {\r\n' + resourceParts.join(',\r\n') + '\r\n  }');
           }
-
 
           newContent = '{' + dictParts.join(', ') + '\r\n}';	
 
@@ -350,15 +358,14 @@ window.pageScript = function(){
     //
 
     var templateInspector = (function(){
-      /*var overlay = DOM.createElement('DIV[style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10000; background: rgba(128,128,128,.0.05)"]');
-      overlay.addEventListener('click', clickHandler);*/
-      //var elements = [];
       var inspectMode;
+      var inspectDepth = 0;
 
       function startInspect(){ 
         if (!inspectMode)
         {
           basis.dom.event.addGlobalHandler('mousemove', mousemoveHandler);
+          basis.dom.event.addGlobalHandler('mousewheel', mouseWheelHandler);
           inspectMode = true;
         }
       }
@@ -366,29 +373,74 @@ window.pageScript = function(){
         if (inspectMode)
         {
           basis.dom.event.removeGlobalHandler('mousemove', mousemoveHandler);
+          basis.dom.event.removeGlobalHandler('mousewheel', mouseWheelHandler);
           inspectMode = false;
           pickupTarget.set();
         }
       }
 
+      var lastMouseX;
+      var lastMouseY;
+      var DEPTH_MODE_MOVE_THRESHOLD = 15;
+
       function mousemoveHandler(){
+        var mouseX = basis.dom.event.mouseX(event);
+        var mouseY = basis.dom.event.mouseY(event);
+
+        if (inspectDepth)
+        {
+          var realMove = !lastMouseX || Math.abs(mouseX - lastMouseX) > DEPTH_MODE_MOVE_THRESHOLD || Math.abs(mouseY - lastMouseY) > DEPTH_MODE_MOVE_THRESHOLD;
+
+          if (!realMove)
+            return;
+        }
+
+        lastMouseX = mouseX;
+        lastMouseY = mouseY;
+
+
         var sender = basis.dom.event.sender(event);
         var cursor = sender;
         var refId;
         do {
           if (refId = cursor.basisObjectId)
-          {
-            /*document.addEventListener('mousedown', kill, true);
-            sender.addEventListener('click', kill, true);*/
-            /*basis.dom.event.addHandler(sender, 'mousedown', kill);
-            basis.dom.event.addHandler(sender, 'click', kill);
-            basis.dom.event.addHandler(sender, 'mouseup', kill);*/
+          { 
+            inspectDepth = 0;
             return pickupTarget.set(basis.template.resolveObjectById(refId));
           }
         } while (cursor = cursor.parentNode);
 
-        //if (sender != overlay)
-          pickupTarget.set();
+        pickupTarget.set();
+      }
+
+      function mouseWheelHandler(){
+        var delta = basis.dom.event.wheelDelta(event);
+        var sender = basis.dom.event.sender(event);
+        var cursor = sender;
+
+        var tempDepth = inspectDepth + delta;
+
+        var curDepth = 0;
+        var lastRefId;
+        var lastDepth;
+
+        var refId;
+        do {
+          if (refId = cursor.basisObjectId)
+          {
+            lastRefId = refId;
+            lastDepth = curDepth;
+            if (tempDepth < 0 || curDepth == tempDepth)
+              break;
+
+            curDepth++;
+          }
+        } while (cursor = cursor.parentNode);
+
+        pickupTarget.set(basis.template.resolveObjectById(lastRefId));
+        inspectDepth = lastDepth;
+
+        basis.dom.event.kill(event);
       }
 
       var pickupTarget = new basis.data.property.Property(null, {
@@ -400,14 +452,14 @@ window.pageScript = function(){
       });
 
       function updatePickupElement(property, oldValue){
-        var value = property.value;
-        if (value)
+        var node = property.value;
+        if (node)
         {
           //range.selectNodeContents(value.element);
-          var rect = value.element.getBoundingClientRect();
+          var rect = node.element.getBoundingClientRect();
           if (rect)
           {
-            basis.cssom.setStyle(overlay, {
+            basis.cssom.setStyle(overlay, {                              
               left: rect.left + 'px',
               top: rect.top + 'px',
               width: rect.width + 'px',
@@ -417,7 +469,6 @@ window.pageScript = function(){
             basis.dom.event.captureEvent('mousedown', basis.dom.event.kill);
             basis.dom.event.captureEvent('mouseup', basis.dom.event.kill);
             basis.dom.event.captureEvent('click', clickHandler);
-            //basis.dom.event.addGlobalHandler('mousedown', clickHandler);
           }
         }
         else
@@ -426,18 +477,65 @@ window.pageScript = function(){
           basis.dom.event.releaseEvent('mousedown');
           basis.dom.event.releaseEvent('mouseup');
           basis.dom.event.releaseEvent('click');
-          //basis.dom.event.addGlobalHandler('mousedown', clickHandler);
+          inspectDepth = 0;
         }
+
+        nodeInfoPopup().setDelegate(node);
       }
 
+      var nodeInfoPopup = Function.lazyInit(function(){
+        var panel = new basis.ui.Node({
+          template: '<div>{title}</div>',
+          binding: {
+            title: {
+              events: 'delegateChanged update',
+              getter: function(object){
+                if (object.delegate)
+                {
+                  var el = object.delegate.element;
+                  return object.delegate.constructor.className + '#'+ object.eventObjectId + ', ' + el.tagName.toLowerCase() + (el.id ? '#' + el.id : (el.className ? '.' + el.className.split(' ').join('.') : ''));
+                }
+              }
+            }
+          }
+        });
+
+        var popup = new basis.ui.popup.Balloon({
+          dir: 'left bottom left top',
+          autorotate: [
+            'left top left bottom', 
+            'left bottom left bottom', 
+            'left top left top', 
+            'right bottom right top', 
+            'right top right bottom',
+            'right bottom right bottom',
+            'right top right top' 
+          ],
+          childNodes: panel,
+          handler: {
+            delegateChanged: function(){
+              if (this.delegate)
+                this.show(this.delegate.element);
+              else
+                this.hide();
+
+              panel.setDelegate(this.delegate);
+            },
+            hide: function(){
+              this.setDelegate();
+            }
+          }
+        });
+
+        return popup;
+      });
+       
 
       var overlay = DOM.createElement('DIV[style="pointer-events: none; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10000; background: rgba(110,163,217,0.7)"]');
-      //overlay.addEventListener('click', clickHandler);
-      /*function kill(event){
-        basis.dom.event.kill(event);
-      }*/
+
       function clickHandler(event){
         basis.dom.event.kill(event);
+
         if (pickupTarget.value)
         {
           var url = pickupTarget.value.template.source.url;

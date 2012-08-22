@@ -51,6 +51,7 @@
       -webkit-user-modify: read-write;
 
     font-family: Consolas;
+
   }
 
   .ResourceEditor .CreateFilePanel + .ResourceEditor-Content
