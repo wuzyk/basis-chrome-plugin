@@ -296,6 +296,7 @@ window.pageScript = function(){
       var filename;
       var file;
       var newContent;
+
       for (var i = 0, culture; culture = cultureList[i]; i++)
       {
         filename = '/' + basis.path.relative(location + '/' + culture + '.json');
@@ -304,7 +305,7 @@ window.pageScript = function(){
         if (file)
         {
           dictionaries = Object.extend({}, basis.resource(filename)());
-          //dictionaries[dictionaryName] = dict.resources[culture];
+          dictionaries[dictionaryName] = dict.resources[culture];
           dictParts = [];
           for (var dName in dictionaries)
           {

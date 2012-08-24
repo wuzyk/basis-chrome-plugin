@@ -217,12 +217,13 @@
         for (var i in resourcesLoaded)
           delete resourcesLoaded[i];
 
-        var currentDictionary = property_CurrentDictionary.value;
+        property_CurrentDictionary.set(null);
+        /*var currentDictionary = property_CurrentDictionary.value;
         if (currentDictionary)
         {
           property_CurrentDictionary.set(null);
           property_CurrentDictionary.set(currentDictionary);
-        }
+        }*/
 
         app.callPageScriptFunction('loadCultureList');
         app.callPageScriptFunction('loadDictionaryList');
