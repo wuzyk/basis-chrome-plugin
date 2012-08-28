@@ -6,7 +6,7 @@
   basis.require('basis.ui');
   basis.require('basis.ui.tree');
 
-  resource('../templates/tokenView/style.css')().startUse();
+  //resource('../templates/tokenView/style.css')().startUse();
 
   //
   // import names
@@ -423,9 +423,24 @@
  /**
   * panel
   */
-  var widget = new UIContainer({
-    id: 'Viewer',
+  var widget = new basis.ui.Node({
+    expanded: false,
+    template: resource('../templates/tokenView/widget.tmpl'),
 
+    binding: {
+      expanded: function(object){
+        return object.expanded ? 'expanded' : '';
+      }
+    },
+
+    action: {
+      toggle: function(){
+        this.expanded = !this.expanded;
+        this.updateBind('expanded');
+      }
+    },
+
+    
     childNodes: tree
   });
   /*var widget = new nsLayout.VerticalPanelStack({

@@ -85,7 +85,7 @@
   // Editor
   //
 
-  var widget = new nsLayout.VerticalPanelStack({
+  var widget = new basis.ui.Node({//new nsLayout.VerticalPanelStack({
     id: 'Editor',
 
     childNodes: [
@@ -132,7 +132,9 @@
           })
         ]
       },
-      {
+      tmplEditor,
+      tokenView()	
+      /*{
         flex: 1,
         autoDelegate: DELEGATE.PARENT,
         childNodes: tmplEditor
@@ -141,7 +143,7 @@
         flex: 1,
         //autoDelegate: DELEGATE.PARENT,
         childNodes: tokenView()//cssEditor
-      }
+      }*/
     ]
   });
 

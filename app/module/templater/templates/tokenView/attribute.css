@@ -1,19 +1,19 @@
 
-  #Viewer .AttributeList
+  #TemplateDeclarationViewer .AttributeList
   {
     color: #333;
   }
-  #Viewer .Attribute
+  #TemplateDeclarationViewer .Attribute
   {
     padding: 2px .25em;
     white-space: nowrap;
   }
-  #Viewer .AttributeValue
+  #TemplateDeclarationViewer .AttributeValue
   {
     display: none;
   }
-  #Viewer .templater-AttributeValueBinding,
-  #Viewer .templater-AttributeClassBinding
+  #TemplateDeclarationViewer .templater-AttributeValueBinding,
+  #TemplateDeclarationViewer .templater-AttributeClassBinding
   {
     background: #CDEB8B;
     color: #050;
@@ -21,18 +21,18 @@
     border-radius: 2px;
     text-shadow: 0 1px rgba(255,255,255,.75);
   }
-  #Viewer .Attribute.hasChildren .AttributeValue
+  #TemplateDeclarationViewer .Attribute.hasChildren .AttributeValue
   {
     display: inline;
   }
-  #Viewer .Attribute.isEvent
+  #TemplateDeclarationViewer .Attribute.isEvent
   {
     border-radius: 2px;
     background-color: #FE8;
     color: #530;
     text-shadow: 0 1px rgba(255, 255, 255, .75);
   }
-  #Viewer .Attribute.isEvent:hover
+  #TemplateDeclarationViewer .Attribute.isEvent:hover
   {
     background-color: #FFE000;
     color: #000;
