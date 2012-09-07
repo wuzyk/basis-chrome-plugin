@@ -115,7 +115,7 @@
   }
 
 
-  .Localization-InspectButton
+  .Localization-InspectButton.Basis-Button
   {
     position: absolute;
     top: -1px;
@@ -123,7 +123,7 @@
     font-size: 100%;
   }
 
-  .Localization-InspectButton .Basis-Button-Caption
+  .Localization-InspectButton.Basis-Button .Basis-Button-Caption
   {
     font-weight: bold;
     font-size: 85%;
@@ -132,7 +132,7 @@
   }
 
 
-  .Localization-InspectButton.active .Basis-Button-Back
+  .Localization-InspectButton.Basis-Button.active .Basis-Button-Back
   {
     background-color: #BCD7F2;
     border-color: #888;

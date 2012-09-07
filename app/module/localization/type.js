@@ -171,7 +171,7 @@
   }
 
   function addCulture(culture){
-    var usedCulturesCount = usedCulturesDataset.getItems().length;
+    var usedCulturesCount = usedCulturesDataset.getItems().length - 1;
 
     var dictionaries = Dictionary.all.getItems();
     for (var i = 0, dictionary; dictionary = dictionaries[i]; i++)
