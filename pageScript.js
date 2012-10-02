@@ -68,11 +68,11 @@ window.pageScript = function(){
     //
     // l10n Inspect
     //
+    var inspectMode;
+    var elements = [];
 
     var overlay = DOM.createElement('DIV[style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10000; background: rgba(128,128,128,.0.05)"]');
     overlay.addEventListener('click', clickHandler);
-    var inspectMode;
-    var elements = [];
 
     function clickHandler(event){
       var sender = basis.dom.event.sender(event);
@@ -85,16 +85,29 @@ window.pageScript = function(){
       } 
     }
 
+    // mutant event observer
+    var observerConfig = {
+      subtree: true,
+      attributes: true,
+      characterData: true
+    };
+    var observer = new WebKitMutationObserver(function(mutations) {
+      unhighlight();
+      highlight();  
+    });
+
     function startInspect(){ 
       if (!inspectMode)
       {
         highlight();
         inspectMode = true;
+        observer.observe(document.body, observerConfig);
       }
     }
     function endInspect(){
       if (inspectMode)
       {
+        observer.disconnect();
         unhighlight();
         inspectMode = false;
       }
