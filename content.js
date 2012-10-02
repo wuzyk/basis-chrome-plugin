@@ -1,4 +1,5 @@
 (function(){
+
   var transferDiv;
   var transferDataHandler = function(){
     var action = transferDiv.getAttribute('action');

@@ -133,10 +133,9 @@ window.pageScript = function(){
               bindings = (node.tmpl.set.debug && node.tmpl.set.debug()) || [];
               for (var j = 0, binding; binding = bindings[j]; j++)
               {
-                if (binding.attachment && binding.dom.nodeType == basis.dom.TEXT_NODE && child.contains(binding.dom))
+                if (binding.attachment && binding.dom.nodeType == basis.dom.TEXT_NODE/* && child.contains(binding.dom)*/)
                 {
                   //nodes.push(binding.dom);
-
                   range.selectNodeContents(binding.dom);
                   var rect = range.getBoundingClientRect();
                   if (rect)
@@ -457,7 +456,8 @@ window.pageScript = function(){
         if (node)
         {
           //range.selectNodeContents(value.element);
-          var rect = node.element.getBoundingClientRect();
+          //var rect = node.element.getBoundingClientRect();
+          var rect = getOffsetRect(node.element);
           if (rect)
           {
             basis.cssom.setStyle(overlay, {                              
@@ -542,7 +542,7 @@ window.pageScript = function(){
           var url = pickupTarget.value.template.source.url;
           if (url)
           {
-            var filename = '/' + basis.path.relative(url);
+            var filename = url.substr((location.protocol + '//' + location.host).length);
             sendData('pickTemplate', { filename: filename });
           }
           else
@@ -563,6 +563,29 @@ window.pageScript = function(){
     }
     function endTemplateInspect(){
       templateInspector.end();
+    }
+
+    function getOffsetRect(elem){
+      var box = elem.getBoundingClientRect();
+
+      var body = document.body;
+      var docElem = document.documentElement;
+
+      var scrollTop = window.pageYOffset || docElem.scrollTop || body.scrollTop
+      var scrollLeft = window.pageXOffset || docElem.scrollLeft || body.scrollLeft
+
+      var clientTop = docElem.clientTop || body.clientTop || 0
+      var clientLeft = docElem.clientLeft || body.clientLeft || 0
+
+      var top  = box.top +  scrollTop - clientTop
+      var left = box.left + scrollLeft - clientLeft
+
+      return { 
+        top: Math.round(top), 
+        left: Math.round(left),
+        width: box.width,
+        height: box.height
+      }
     }
 
 
@@ -586,7 +609,7 @@ window.pageScript = function(){
       if (/tmpl$/.test(file.data.filename) && file.data.content)
       {
         data.declaration = basis.template.makeDeclaration(file.data.content, basis.path.dirname(basis.path.resolve(file.data.filename)) + '/');
-        data.resources = data.declaration.resources.map(function(item){ return '/' + basis.path.relative(item) });
+        data.resources = data.declaration.resources.map(function(item){ return item.substr((location.protocol + '//' + location.host).length)/*'/' + basis.path.relative(item)*/ });
       }  
         
       sendData('updateFile', data);

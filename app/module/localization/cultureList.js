@@ -48,8 +48,8 @@
     childClass: {
       template: resource('template/cultureComboboxItem.tmpl'),
 
-      titleGetter: Function.getter('data.Culture'),
-      valueGetter: Function.getter('data.Culture'),
+      titleGetter: Function.getter('data.Culture || ""'),
+      valueGetter: Function.getter('data.Culture || ""'),
       
       binding: {
         spriteX: {
