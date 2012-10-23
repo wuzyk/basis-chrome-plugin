@@ -509,7 +509,7 @@ window.pageScript = function(){
                 if (object.delegate)
                 {
                   var el = object.delegate.element;
-                  return object.delegate.constructor.className + '#'+ (object.basisObjectId || object.eventObjectId) + ', ' + el.tagName.toLowerCase() + (el.id ? '#' + el.id : (el.className ? '.' + el.className.split(' ').join('.') : ''));
+                  return object.delegate.constructor.className + '#' + el.basisObjectId + ', ' + el.tagName.toLowerCase() + (el.id ? '#' + el.id : (el.className ? '.' + el.className.split(' ').join('.') : ''));
                 }
               }
             }
