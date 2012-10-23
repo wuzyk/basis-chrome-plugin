@@ -3,6 +3,8 @@ window.pageScript = function(){
     basis.require('basis.ui');
     basis.require('basis.ui.popup');
     basis.require('basis.dom.wrapper');
+    basis.require('basis.data');
+    basis.require('basis.data.property');
 
     var DOM = basis.dom;
     var STATE = basis.data.STATE;
@@ -507,7 +509,7 @@ window.pageScript = function(){
                 if (object.delegate)
                 {
                   var el = object.delegate.element;
-                  return object.delegate.constructor.className + '#'+ object.eventObjectId + ', ' + el.tagName.toLowerCase() + (el.id ? '#' + el.id : (el.className ? '.' + el.className.split(' ').join('.') : ''));
+                  return object.delegate.constructor.className + '#'+ (object.basisObjectId || object.eventObjectId) + ', ' + el.tagName.toLowerCase() + (el.id ? '#' + el.id : (el.className ? '.' + el.className.split(' ').join('.') : ''));
                 }
               }
             }
