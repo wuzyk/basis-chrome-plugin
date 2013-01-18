@@ -32,7 +32,7 @@
       basis.ui.Node.prototype.init.call(this, config);
       //this.inherit(config);
 
-      memos[this.eventObjectId] = this;
+      memos[this.basisObjectId] = this;
 
       basis.dom.event.addHandler(this.element, 'scroll', function(){
         this.element.scrollTop = 0;
@@ -60,7 +60,7 @@
       });
     },
     destroy: function(){
-      delete memos[this.eventObjectId];
+      delete memos[this.basisObjectId];
 
       clearInterval(this.timer);
       delete this.timer;
