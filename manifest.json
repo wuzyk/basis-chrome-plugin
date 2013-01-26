@@ -1,9 +1,9 @@
 {
   "name": "Basis Framework Tools",
-  "version": "1.2.0",
+  "version": "1.3",
   "description": "Basis developer tools",
   "devtools_page": "devtools.html",
-  "manifest_version": 1,
+  "manifest_version": 2,
   "permissions":  [
     "tabs",
     "contextMenus", 
@@ -21,5 +21,4 @@
       "js": ["content.js"]
     }
   ]
-  
 }

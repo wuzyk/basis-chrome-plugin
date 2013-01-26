@@ -67,9 +67,6 @@
     title: 'Translate',
     contexts: ["all"],
     onclick: function(info, tab){
-      /*if (extensionTabIdTab[tab.id])
-        chrome.tabs.update(extensionTabIdTab[tab.id], { active: true });*/
-
       if (extensionUIPorts[tab.id])
         extensionUIPorts[tab.id].postMessage({ action: 'contextMenuTranslate' });
     }
